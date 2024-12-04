@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación SMS</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Verificación por SMS</h1>
+        
+        <form id="verificationForm">
+            <!-- Campos para Validar Código -->
+            <div id="validationFields">
+                <label for="code">Código de verificación:</label>
+                <input type="text" id="code" placeholder="Introduce el código" required />
+                <!-- Botón para Enviar el Código -->
+                <button type="button" id="sendCodeButton">Enviar código</button>
+                <button type="submit">Validar código</button>
+            </div>
+        </form>
+
+        <p id="message"></p>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
