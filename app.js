@@ -1,9 +1,18 @@
 const express = require('express');
 require('dotenv').config();
 const twilio = require('twilio');
+const cors = require('cors');
 
 const app = express();
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+// Configurar CORS
+app.use(cors({
+    origin: '*', // Permitir todos los orígenes. Cambia esto a tu dominio específico en producción.
+    methods: ['GET', 'POST'], // Métodos permitidos.
+    allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos.
+}));
+
 
 app.use(express.json());
 app.use(express.static('public'));
