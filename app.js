@@ -2,9 +2,17 @@ const express = require('express');
 require('dotenv').config();
 const twilio = require('twilio');
 const cors = require('cors');
+const crypto = require('crypto');
 
 const app = express();
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+const FRONT_ALLOWED_ORIGIN = '*'; // en prod: "https://twilioforrrealtacos.onrender.com"
+const verificationCodes = {};
+const defaultPhone = '+541151019149';
+const OTP_TTL_SECONDS = 2 * 60;      // 2 min de vida del OTP (opcional)
+const GRANT_TTL_SECONDS = 30 * 60;   // 30 min de acceso en WP
+const WP_DOMAIN = 'https://tacosuniversity.com'; // WP de destino
 
 // Configurar CORS
 app.use(cors({
@@ -17,8 +25,15 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static('public'));
 
-const verificationCodes = {};
-const defaultPhone = '+541151019149';
+// Generar token firmado (base64url) para WP (/otp-grant)
+function makeGrantToken(phone, ttlSeconds = GRANT_TTL_SECONDS) {
+
+    const exp = Math.floor(Date.now() / 1000) + ttlSeconds;
+    const payload = `${phone}|${exp}`;
+    const sig = crypto.createHmac('sha256', process.env.OTP_SHARED_SECRET).update(payload).digest('hex');
+
+    return Buffer.from(`${payload}|${sig}`).toString('base64url');
+}
 
 // Ruta para enviar el código
 app.post('/send-code', async (req, res) => {
@@ -43,7 +58,12 @@ app.post('/verify-code', (req, res) => {
 
     if (verificationCodes[defaultPhone] === code) {
         delete verificationCodes[defaultPhone];
-        res.json({ success: true, message: 'Código verificado correctamente.' });
+
+        const grant_token = makeGrantToken(defaultPhone);
+        const nextParam = (req.query.next && typeof req.query.next === 'string') ? req.query.next : '/';
+        const grant_url = `${WP_DOMAIN}/otp-grant?token=${encodeURIComponent(grant_token)}&next=${encodeURIComponent(nextParam)}`;
+
+        res.json({ success: true, message: 'Código verificado correctamente.', grant_token, grant_url });
     } else {
         res.status(400).json({ success: false, message: 'Código incorrecto o expirado.' });
     }

@@ -1,3 +1,6 @@
+const API_BASE = window.location.origin;
+const NEXT_PATH = "/";
+
 const sendCodeButton = document.getElementById('sendCodeButton');
 const validationFields = document.getElementById('validationFields');
 const messageElement = document.getElementById('message');
@@ -12,7 +15,7 @@ sendCodeButton.addEventListener('click', async () => {
 
     // Enviar el código de verificación al número predeterminado
     try {
-        const response = await fetch('/send-code', {
+        const response = await fetch(`${API_BASE}/send-code`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -48,7 +51,7 @@ document.getElementById('verificationForm').addEventListener('submit', async (e)
 
     // Enviar la solicitud de validación
     try {
-        const response = await fetch('/verify-code', {
+        const response = await fetch(`${API_BASE}/verify-code?next=${encodeURIComponent(NEXT_PATH)}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,9 +61,9 @@ document.getElementById('verificationForm').addEventListener('submit', async (e)
 
         const data = await response.json();
 
-        if (data.success) {
+        if (data.success && data.grant_url) {
             // Redirigir a otra página
-            window.location.href = 'https://rrealtacos.com/';
+            window.location.href = data.grant_url;
         } else {
             messageElement.textContent = 'Código incorrecto o expirado.';
         }
