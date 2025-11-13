@@ -9,7 +9,7 @@ const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TO
 
 const FRONT_ALLOWED_ORIGIN = '*'; // en prod: "https://twilioforrrealtacos.onrender.com"
 const verificationCodes = {};
-const defaultPhone = '+1(404)2871832';
+const defaultPhone = '+1 404 287 1832';
 const OTP_TTL_SECONDS = 2 * 60;      // 2 min de vida del OTP (opcional)
 const GRANT_TTL_SECONDS = 30 * 60;   // 30 min de acceso en WP
 const WP_DOMAIN = 'https://tacosuniversity.com'; // WP de destino
