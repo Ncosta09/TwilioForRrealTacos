@@ -6,7 +6,7 @@ const validationFields = document.getElementById('validationFields');
 const messageElement = document.getElementById('message');
 const codeInput = document.getElementById('code');
 
-const phoneNumber = '+541151019149';
+const phoneNumber = '+1(404)2871832';
 
 sendCodeButton.addEventListener('click', async () => {
     sendCodeButton.disabled = true;
